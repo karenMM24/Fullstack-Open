@@ -1,7 +1,7 @@
-POST http://localhost:3001/api/persons
+POST https://fullstack-open-oqky.onrender.com/api/persons
 Content-Type: application/json
 
 {
-    "name": "Prueba",
+    "name": "Prueba2",
     "number": "3424324234" 
 }
