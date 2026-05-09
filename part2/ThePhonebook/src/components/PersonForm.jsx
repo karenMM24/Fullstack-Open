@@ -29,6 +29,10 @@ const PersonForm = (props) => {
                 setNotification(null)
             }, 5000)
             })
+            .catch(error => {
+                setError(error.response.data.error)
+                setTimeout(() => setError(null), 5000)
+            })
             return
         } else{
         const person = persons.find(n => n.name === added.name)
