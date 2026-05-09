@@ -108,22 +108,17 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    const isRepeated = persons.some(person => person.name.toLowerCase() === body.name.toLowerCase())
-
-    if(isRepeated){
-        return response.status(400).json({
-            error: 'name must be unique'
-        })
-    }
 
     const person = new Person({
         name: body.name,
         number: body.number,
     })
 
-    person.save().then(savedPerson => {
+    person.save()
+    .then(savedPerson => {
         response.json(savedPerson)
     })
+    .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
@@ -138,6 +133,10 @@ const errorHandler = (error, request, response, next) => {
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id' })
     } 
+
+    if (error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message })
+    }
 
     next(error)
 }
