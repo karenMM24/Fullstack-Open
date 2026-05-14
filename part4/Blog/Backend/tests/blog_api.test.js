@@ -118,3 +118,18 @@ test('delete success status 204 if id valid', async () => {
 
   assert.strictEqual(blogAtEnd.length, helper.initialBlogs.length - 1)
 })
+
+test('a blog can update likes', async () => {
+  const blog = await helper.blogsInDb()
+  const blogToUpdate = blog[0]
+
+  await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send({ ...blogToUpdate, likes: 10 })
+    .expect(200)
+
+  const blogsAfter = await helper.blogsInDb()
+  const blogUpdated = blogsAfter[0]
+  assert.strictEqual(blogUpdated.likes, 10)
+
+})
