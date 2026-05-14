@@ -2,7 +2,7 @@ const { test, describe } = require('node:test')
 const assert = require('node:assert')
 const listHelper = require('../utils/list_helper')
 
-describe('total likes', () => {
+describe('most liked blog', () => {
   const blogs = [
     {
       _id: '5a422a851b54a676234d17f7',
@@ -66,18 +66,34 @@ describe('total likes', () => {
 
   const zeroBlog = []
 
-  test('of empty list is zero', () => {
-    const result = listHelper.totalLikes(zeroBlog)
-    assert.strictEqual(result, 0)
+  test('of empty list is null', () => {
+    const result = listHelper.favoriteBlog(zeroBlog)
+    assert.strictEqual(result, null)
   })
 
   test('when one blog equals to that', () => {
-    const result = listHelper.totalLikes(listWithOneBlog)
-    assert.strictEqual(result, 5)
+    const result = listHelper.favoriteBlog(listWithOneBlog)
+    const expected = {
+      _id: '5a422aa71b54a676234d17f8',
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
+      likes: 5,
+      __v: 0
+    }
+    assert.deepStrictEqual(result, expected)
   })
 
   test('of bigger list is rigth', () => {
-    const result = listHelper.totalLikes(blogs)
-    assert.strictEqual(result, 36)
+    const result = listHelper.favoriteBlog(blogs)
+    const expected = {
+      _id: '5a422b3a1b54a676234d17f9',
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+      likes: 12,
+      __v: 0
+    }
+    assert.deepStrictEqual(result, expected)
   })
 })
