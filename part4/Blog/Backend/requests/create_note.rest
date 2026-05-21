@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/blogs
+
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImthcmVubW0iLCJpZCI6IjZhMGUyZGVhYWU0ZDM5MWY3MjFiM2YxNCIsImlhdCI6MTc3OTMyNDEyOH0.EU5abwHoYjGUHW1CTECQSjBhM8ib56mrjZpdjFSeMac
+
+{
+  "title":"Token test",
+  "author":"me owo",
+  "url":"tokenurl.com"
+}
