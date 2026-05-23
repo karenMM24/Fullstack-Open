@@ -1,6 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
+//const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
 
@@ -16,7 +16,7 @@ blogsRouter.post('/', async (request, response) => {
   if(!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })
   }
-  const user = await User.findById(decodedToken.id)
+  const user = request.user
 
   if(!user){
     return response.status(400).json({ error: 'userId missing or not valid' })
@@ -38,6 +38,22 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  if(!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  const user = request.user
+
+  if(!user){
+    return response.status(400).json({ error: 'userId missing or not valid' })
+  }
+
+  const blog = await Blog.findById(request.params.id)
+
+  if(!(blog.user.toString() === user._id.toString())){
+    return response.status(401).json({ error: 'user not authorized ' })
+  }
+
   await Blog.findByIdAndDelete(request.params.id)
   response.status(204).end()
 })
