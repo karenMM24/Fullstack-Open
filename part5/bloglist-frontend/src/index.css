@@ -1,3 +1,8 @@
+button{
+    margin-bottom: 10px;
+    margin-left: 5px;
+}
+
 .notification {
     color: rgb(79, 139, 67);
     background: lightgrey;
@@ -17,3 +22,13 @@
     padding: 10px;
     margin-bottom: 10px;
 } 
+
+.logOut-btn {
+    display:inline-block;
+    margin-bottom: 20px;
+}
+
+.logged-user {
+    display: inline;
+    margin-bottom: 20px;
+}

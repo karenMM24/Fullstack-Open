@@ -1,7 +1,7 @@
 import { useState } from "react"
 import blogService from '../services/blogs'
 
-export const NewBlogForm = ({ blogs, setBlogs, setNotification }) => {
+export const NewBlogForm = ({ blogs, setBlogs, setNotification, user }) => {
   const [title, setTitle] = useState("")
   const [author, setAuthor] = useState("")
   const [url, setUrl] = useState("")
@@ -13,7 +13,7 @@ export const NewBlogForm = ({ blogs, setBlogs, setNotification }) => {
     const newBlog = {
       title,
       author,
-      url
+      url,
     }
 
     try{
