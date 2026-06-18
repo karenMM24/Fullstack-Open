@@ -1,10 +1,10 @@
-import { useState } from "react"
+import { useState } from 'react'
 import blogService from '../services/blogs'
 
-export const NewBlogForm = ({ blogs, setBlogs, setNotification, user }) => {
-  const [title, setTitle] = useState("")
-  const [author, setAuthor] = useState("")
-  const [url, setUrl] = useState("")
+export const NewBlogForm = ({ blogs, setBlogs, setNotification }) => {
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
 
   const createBlog = async event => {
@@ -18,11 +18,11 @@ export const NewBlogForm = ({ blogs, setBlogs, setNotification, user }) => {
 
     try{
       const returnedBlog = await blogService.create(newBlog)
-      setAuthor("")
-      setTitle("")
-      setUrl("")
+      setAuthor('')
+      setTitle('')
+      setUrl('')
 
-      setNotification({message:`a new blog ${returnedBlog.title} by ${returnedBlog.author} have been added`, isError:false})
+      setNotification({ message:`a new blog ${returnedBlog.title} by ${returnedBlog.author} have been added`, isError:false })
       setTimeout(() => {
         setNotification(null)
       }, 5000)
@@ -40,10 +40,10 @@ export const NewBlogForm = ({ blogs, setBlogs, setNotification, user }) => {
       <div>
         <label>
           title:
-          <input 
-          type='text'
-          value={title}
-          onChange={({ target }) => setTitle(target.value)}
+          <input
+            type='text'
+            value={title}
+            onChange={({ target }) => setTitle(target.value)}
           />
         </label>
       </div>

@@ -16,7 +16,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -30,9 +30,9 @@ const App = () => {
 
   const handleLogin = async event => {
     event.preventDefault()
-    
+
     try {
-      const user = await loginService.login({ username, password})
+      const user = await loginService.login({ username, password })
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
@@ -43,7 +43,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch {
-      setNotification({message:"Wrong username or password", isError:true})
+      setNotification({ message:'Wrong username or password', isError:true })
       setTimeout(() => {
         setNotification(null)
       },5000)
@@ -82,8 +82,8 @@ const App = () => {
   const logOut = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
-    setUsername("")
-    setPassword("")
+    setUsername('')
+    setPassword('')
   }
 
 
@@ -100,15 +100,14 @@ const App = () => {
           <Togglable buttonLabel="create new blog">
             <NewBlogForm blogs={blogs} setBlogs={setBlogs} setNotification={setNotification} user={user}/>
           </Togglable>
-        
+
           <div>
             {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
-              <Blog key={blog.id} blog={blog} setBlogs={setBlogs} blogs={blogs}/>
+              <Blog key={blog.id} blog={blog} setBlogs={setBlogs} blogs={blogs} user={user}/>
             )}
           </div>
         </div>
       )}
-      
 
     </div>
   )

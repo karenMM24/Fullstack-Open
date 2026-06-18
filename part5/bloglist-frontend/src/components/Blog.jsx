@@ -1,7 +1,7 @@
-import { useState } from "react"
+import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, setBlogs, blogs }) => {
+const Blog = ({ blog, setBlogs, blogs, user }) => {
   const [show, setShow] = useState(false)
 
   const blogStyle = {
@@ -26,9 +26,9 @@ const Blog = ({ blog, setBlogs, blogs }) => {
       author:blog.author,
       url:blog.url,
       likes:blog.likes + 1,
-      user:blog.user.id  
+      user:blog.user.id
     }
-    console.log("user", blog.user)
+    console.log('user', blog.user)
     console.log('blog tryng to upd', blog)
     console.log('updated Blog', updateBlog)
     try{
@@ -51,11 +51,25 @@ const Blog = ({ blog, setBlogs, blogs }) => {
     }
   }
 
+  const deleteBlog = async () => {
+    if(window.confirm(`Remove blog ${blog.title} by ${blog.author}`)){
+      try{
+        await blogService.remove(blog.id)
+        setBlogs(blogs.filter(b => b.id !== blog.id))
+      }catch(error){
+        console.log('oh oh, smt went wrong')
+        console.error(error)
+      }
+    }
+  }
+
+
   const blogInfo = () => (
     <div>
       <p>{blog.url}</p>
       <div>likes {blog.likes} <button onClick={addLike}>like</button></div>
       <p>{blog.user.name}</p>
+      {(blog.user.username === user.username) && <button onClick={deleteBlog}>remove</button>}
     </div>
   )
 
@@ -64,10 +78,10 @@ const Blog = ({ blog, setBlogs, blogs }) => {
     <div style={blogStyle}>
       <div>
         {blog.title} - {blog.author}
-        <button onClick={showInfo}>{show ? "hide" : "show"}</button>
+        <button onClick={showInfo}>{show ? 'hide' : 'show'}</button>
       </div>
       {show && blogInfo()}
-  </div>
-)}
+    </div>
+  )}
 
 export default Blog
