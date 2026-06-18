@@ -1,41 +1,27 @@
 import { useState } from 'react'
-import blogService from '../services/blogs'
 
-export const NewBlogForm = ({ blogs, setBlogs, setNotification }) => {
+export const NewBlogForm = ({createBlog}) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
 
-  const createBlog = async event => {
+  const handleCreateBlog = (event) => {
     event.preventDefault()
 
-    const newBlog = {
+    createBlog({
       title,
       author,
       url,
-    }
+    })
 
-    try{
-      const returnedBlog = await blogService.create(newBlog)
-      setAuthor('')
-      setTitle('')
-      setUrl('')
-
-      setNotification({ message:`a new blog ${returnedBlog.title} by ${returnedBlog.author} have been added`, isError:false })
-      setTimeout(() => {
-        setNotification(null)
-      }, 5000)
-
-      setBlogs(blogs.concat(returnedBlog))
-
-    } catch{
-      console.log('error durinf post')
-    }
+    setAuthor('')
+    setTitle('')
+    setUrl('')
   }
 
   return(
-    <form onSubmit={ createBlog }>
+    <form onSubmit={ handleCreateBlog }>
       <h2>create new</h2>
       <div>
         <label>
@@ -44,6 +30,7 @@ export const NewBlogForm = ({ blogs, setBlogs, setNotification }) => {
             type='text'
             value={title}
             onChange={({ target }) => setTitle(target.value)}
+            placeholder='write the title '
           />
         </label>
       </div>
@@ -54,6 +41,7 @@ export const NewBlogForm = ({ blogs, setBlogs, setNotification }) => {
             type='text'
             value={author}
             onChange={({ target }) => setAuthor(target.value)}
+            placeholder='write the author'
           />
         </label>
       </div>
@@ -64,6 +52,7 @@ export const NewBlogForm = ({ blogs, setBlogs, setNotification }) => {
             type='text'
             value={url}
             onChange={({ target }) => setUrl(target.value)}
+            placeholder='write the url'
           />
         </label>
       </div>

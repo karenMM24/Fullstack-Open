@@ -86,6 +86,65 @@ const App = () => {
     setPassword('')
   }
 
+  const addLike = async (blog) => {
+      const updateBlog = {
+        title:blog.title,
+        author:blog.author,
+        url:blog.url,
+        likes:blog.likes + 1,
+        user:blog.user.id
+      }
+      console.log('user', blog.user)
+      console.log('blog tryng to upd', blog)
+      console.log('updated Blog', updateBlog)
+      try{
+        console.log('enter try')
+        const updatedBlog = await blogService.update(blog.id, updateBlog)
+        console.log('reach update')
+        const blogListUpdated = blogs.map((b) => {
+          if(b.id === updatedBlog.id){
+            return updatedBlog
+          } else{
+            return b
+          }
+        })
+  
+        setBlogs(blogListUpdated)
+  
+      } catch (error){
+        console.log('oh oh, smt went wrong')
+        console.error(error)
+      }
+    }
+
+    const deleteBlog = async (blog) => {
+    if(window.confirm(`Remove blog ${blog.title} by ${blog.author}`)){
+      try{
+        await blogService.remove(blog.id)
+        setBlogs(blogs.filter(b => b.id !== blog.id))
+      }catch(error){
+        console.log('oh oh, smt went wrong')
+        console.error(error)
+      }
+    }
+  }
+
+  const createBlog = async (newBlog) => {
+    
+    try{
+      const returnedBlog = await blogService.create(newBlog)
+      
+      setNotification({ message:`a new blog ${returnedBlog.title} by ${returnedBlog.author} have been added`, isError:false })
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+
+      setBlogs(blogs.concat(returnedBlog))
+
+    } catch{
+      console.log('error durinf post')
+    }
+  }
 
   return (
     <div>
@@ -98,12 +157,12 @@ const App = () => {
           <button className='logOut-btn' onClick={logOut}>log out</button>
 
           <Togglable buttonLabel="create new blog">
-            <NewBlogForm blogs={blogs} setBlogs={setBlogs} setNotification={setNotification} user={user}/>
+            <NewBlogForm createBlog={createBlog} />
           </Togglable>
 
           <div>
             {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
-              <Blog key={blog.id} blog={blog} setBlogs={setBlogs} blogs={blogs} user={user}/>
+              <Blog key={blog.id} blog={blog} user={user} addLike={addLike} deleteBlog={deleteBlog}/>
             )}
           </div>
         </div>
