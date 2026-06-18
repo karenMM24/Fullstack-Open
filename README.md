@@ -5,7 +5,7 @@ Exercises and projects from the [Full Stack Open](https://fullstackopen.com/) co
 ## Featured projects
  
 ### Bloglist app
-Full stack application with user registration and login, token-based authorization (JWT), and full CRUD operations on blog posts linked to the user who created them. Backend covered by automated tests with Jest.
+Full stack application with user registration and login, token-based authorization (JWT), and full CRUD operations on blog posts linked to the user who created them. Backend covered by automated tests with Jest. 
  
 - Frontend: [`/part5/bloglist-frontend`](./part5/bloglist-frontend)
 - Backend: [`/part5/bloglist-backend`](./part5/bloglist-backend)
