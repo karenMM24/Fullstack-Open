@@ -1,6 +1,6 @@
 # Fullstack Open
  
-Exercises and projects from the [Full Stack Open](https://fullstackopen.com/) course (University of Helsinki). The folder structure follows the parts of the course.
+Exercises and projects from the [Full Stack Open](https://fullstackopen.com/) course (University of Helsinki). The folder structure follows the parts of the course. 
  
 ## Featured projects
  
