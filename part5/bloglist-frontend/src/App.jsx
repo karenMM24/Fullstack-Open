@@ -20,6 +20,7 @@ const App = () => {
   const [password, setPassword] = useState('')
 
   const navigate = useNavigate()
+  const match = useMatch('/blogs/:id')
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -48,9 +49,11 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(user)
       console.log(`user set ${user}`)
-      navigate('/')
+      
       setUsername('')
       setPassword('')
+
+      navigate('/')
       
     } catch {
       setNotification({ message:'Wrong username or password', isError:true })
@@ -103,6 +106,7 @@ const App = () => {
     const deleteBlog = async (blog) => {
     if(window.confirm(`Remove blog ${blog.title} by ${blog.author}`)){
       try{
+        navigate('/')
         await blogService.remove(blog.id)
         setBlogs(blogs.filter(b => b.id !== blog.id))
       }catch(error){
@@ -116,13 +120,15 @@ const App = () => {
     
     try{
       const returnedBlog = await blogService.create(newBlog)
-      
+      navigate('/')
       setNotification({ message:`a new blog ${returnedBlog.title} by ${returnedBlog.author} have been added`, isError:false })
       setTimeout(() => {
         setNotification(null)
       }, 5000)
 
       setBlogs(blogs.concat(returnedBlog))
+
+      
 
     } catch{
       console.log('error durinf post')
@@ -133,10 +139,15 @@ const App = () => {
     padding: 5
   }
 
+  const blog = match
+    ? blogs.find(blog => blog.id === match.params.id)
+    : null
+
   return (
     <div>
       <div>
         <Link style={padding} to="/">blogs</Link>
+        {user && (<Link style={padding} to='/create'>new blog</Link>)}
         {!user &&(
           <Link style={padding} to="/login">login</Link>
         )}
@@ -151,6 +162,13 @@ const App = () => {
         <Route path='/' element={
           <BlogList notification={notification} user={user} createBlog={createBlog} blogs={blogs} addLike={addLike} deleteBlog={deleteBlog}/>
         }/>
+        <Route path='/blogs/:id' element={
+          <Blog blog={blog} user={user} addLike={addLike} deleteBlog={deleteBlog}/>
+        }/>
+        <Route path='/create' element={
+          <NewBlogForm createBlog={createBlog}/>
+        }
+        />
       </Routes>
     </div>
   )

@@ -1,6 +1,8 @@
 import { Notification } from "./Notification"
 
+
 const LoginForm = ({handleLogin, username, setUsername, password, setPassword, notification}) => {
+
   return(
     <form onSubmit={handleLogin}>
           <h1>log into application</h1>

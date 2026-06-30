@@ -2,6 +2,8 @@ import Blog from './Blog'
 import Togglable from './Togglable'
 import { NewBlogForm } from './NewBlogForm'
 import { Notification } from './Notification'
+import { Link } from 'react-router-dom'
+
 
 const BlogList = ({notification, user, createBlog, blogs, addLike, deleteBlog}) => {
   return(
@@ -11,18 +13,19 @@ const BlogList = ({notification, user, createBlog, blogs, addLike, deleteBlog}) 
           {user && (
             <div>
               <p className='logged-user'>{user.name} is logged in </p>
-              <Togglable buttonLabel="create new blog">
-                <NewBlogForm createBlog={createBlog} />
-              </Togglable>
             </div>)}
 
           
 
-          <div>
-            {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
-              <Blog key={blog.id} blog={blog} user={user} addLike={addLike} deleteBlog={deleteBlog}/>
-            )}
-          </div>
+          <ul>
+            {blogs.sort((a,b) => b.likes - a.likes).map(blog =>(
+              <li key={blog.id}>
+                <Link to={`/blogs/${blog.id}`}> 
+                  {blog.title} by {blog.author}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
   )
 }

@@ -4,123 +4,123 @@ const { loginWith, createBlog } = require('./helper')
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
     await request.post('/api/testing/reset')
+    
     await request.post('/api/users', {
-      data: {
-        name: 'Matti Luukkainen',
-        username: 'mluukkai',
-        password: 'salainen'
-      }
+      data: { name: 'Matti Luukkainen', username: 'mluukkai', password: 'salainen' }
+    })
+    await request.post('/api/users', {
+      data: { name: 'Test user', username: 'test', password: '12345' }
     })
 
-    await request.post('/api/users', {
-          data: {
-            name: 'Test user',
-            username: 'test',
-            password: '12345'
-          }
-        })
-
     await page.goto('/')
-
   })
 
   test('Login form is shown', async ({ page }) => {
-    // ...
-    const locator = page.getByText('log into application')
-    await expect(locator).toBeVisible()
-    await expect(page.getByRole('button', {name:'login'})).toBeVisible()
+    await page.getByRole('link', { name: 'login' }).click()
+    
+    await expect(page.getByRole('heading', { name: 'log into application' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'login' })).toBeVisible()
   })
 
   describe('Login', () => {
+    beforeEach(async ({ page }) => {
+      await page.getByRole('link', { name: 'login' }).click()
+    })
+
     test('succeeds with correct credentials', async ({ page }) => {
-      // ...
       await loginWith(page, 'mluukkai', 'salainen')
-      await expect(page.getByText('Matti Luukkainen logged in'))
+      await expect(page.getByRole('button', { name: 'log out' })).toBeVisible()
     })
 
     test('fails with wrong credentials', async ({ page }) => {
-      // ...
       await loginWith(page, 'mluukkai', 'wrong')
       await expect(page.getByText('Wrong username or password')).toBeVisible()
-
-      await expect(page.getByText('Matti Luukkainen logged in')).not.toBeVisible()
+      await expect(page.getByRole('button', { name: 'log out' })).not.toBeVisible()
     })
   })
 
   describe('When logged in', () => {
     beforeEach(async ({ page }) => {
-      // ...
-      loginWith(page, 'mluukkai', 'salainen')
+      await page.getByRole('link', { name: 'login' }).click()
+      await loginWith(page, 'mluukkai', 'salainen')
+      await expect(page.getByRole('button', { name: 'log out' })).toBeVisible()
     })
 
     test('a new blog can be created', async ({ page }) => {
-      // ...
-      await page.getByRole('button', {name:'create new blog'}).click()
+      await page.getByRole('link', { name: 'new blog' }).click()
+      
       await page.getByTestId('title').fill('some test title')
       await page.getByTestId('author').fill('author name')
       await page.getByTestId('url').fill('url.com')
-      await page.getByRole('button', {name:'create'}).click()
+      await page.getByRole('button', { name: 'create' }).click()
 
       await expect(page.getByText('a new blog some test title by author name have been added')).toBeVisible()
-      await expect(page.getByText('some test title - author name')).toBeVisible()
+      
+      await page.getByRole('link', { name: 'blogs' }).click()
+      
+      await expect(page.getByRole('link', { name: 'some test title by author name' })).toBeVisible()
     })
 
     describe('and blogs exists', () => {
       beforeEach(async ({ page }) => {
-        await createBlog(page, 'title1', 'author1', 'url1')
-        await createBlog(page, 'title2', 'author2', 'url2')
-        await createBlog(page, 'title3', 'author3', 'url3')
+        const token = await page.evaluate(() => JSON.parse(localStorage.getItem('loggedBlogappUser')).token)
+        
+        await page.request.post('/api/blogs', {
+          data: { title: 'title1', author: 'author1', url: 'url1', likes: 1 },
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
+        await page.request.post('/api/blogs', {
+          data: { title: 'title2', author: 'author2', url: 'url2', likes: 2 },
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
+        await page.request.post('/api/blogs', {
+          data: { title: 'title3', author: 'author3', url: 'url3', likes: 3 },
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
+        
+        await page.goto('/') 
       })
 
-      test('A blog can be edited (likes)', async({ page }) => {
-        await page.getByRole('button', { name: 'show' }).first().click();
-        await page.getByRole('button', { name: 'like' }).click();
-        await expect(page.getByText('likes 1')).toBeVisible()
-        await page.getByRole('button', { name: 'like' }).click();
+      test('A blog can be edited (likes)', async ({ page }) => {
+        await page.getByRole('link', { name: 'title1 by author1' }).click()
+        
+        await page.getByRole('button', { name: 'like' }).click()
         await expect(page.getByText('likes 2')).toBeVisible()
       })
 
-      test('A blog can be eliminated by the user that craeted it', async({ page }) => {
-        await page.getByRole('button', { name: 'show' }).first().click();
+      test('A blog can be eliminated by the user that created it', async ({ page }) => {
         page.on('dialog', async dialog => {
-          console.log(dialog.message()); 
-          await dialog.accept();        
-        });
-        await page.getByRole('button', { name: 'remove' }).click();
-        await expect(page.getByText('title1 - author1')).not.toBeVisible()
+          await dialog.accept()
+        })
+        
+        await page.getByRole('link', { name: 'title1 by author1' }).click()
+        
+        await page.getByRole('button', { name: 'remove' }).click()
+        
+        await page.getByRole('link', { name: 'blogs' }).click()
+        await expect(page.getByRole('link', { name: 'title1 by author1' })).not.toBeVisible()
       })
 
-      test('Button delete only visible for the user that created it', async({ page }) => {
-        await page.getByRole('button', {name:'log out'}).click()
-        loginWith(page,'test','12345')
-        await page.getByRole('button', { name: 'show' }).first().click();
+      test('Button delete only visible for the user that created it', async ({ page }) => {
+        await page.getByRole('button', { name: 'log out' }).click()
+        
+        await page.getByRole('link', { name: 'login' }).click()
+        await loginWith(page, 'test', '12345')
+        
+        await page.getByRole('link', { name: 'blogs' }).click()
+        
+        await page.getByRole('link', { name: 'title1 by author1' }).click()
+        
         await expect(page.getByRole('button', { name: 'remove' })).not.toBeVisible()
       })
 
-      test('Blogs in orden of likes', async({page}) => {
-        const blog1 = page.locator('.blog').filter({ hasText: 'title1 - author1' })
-        const blog2 = page.locator('.blog').filter({ hasText: 'title2 - author2' })
-        const blog3 = page.locator('.blog').filter({ hasText: 'title3 - author3' })
-
-        await blog1.getByRole('button', { name: 'show' }).click()
-        await blog2.getByRole('button', { name: 'show' }).click()
-        await blog3.getByRole('button', { name: 'show' }).click()
-
-        await blog3.getByRole('button', { name: 'like' }).click()
-        await expect(blog3).toContainText('likes 1')
+      test('Blogs in orden of likes', async ({ page }) => {
+        const listItems = page.locator('li')
         
-        await blog3.getByRole('button', { name: 'like' }).click()
-        await expect(blog3).toContainText('likes 2')
-
-        await blog2.getByRole('button', { name: 'like' }).click()
-        await expect(blog2).toContainText('likes 1')
-
-        const allBlogs = page.locator('.blog')
-        await expect(allBlogs.nth(0)).toContainText('title3 - author3') 
-        await expect(allBlogs.nth(1)).toContainText('title2 - author2') 
-        await expect(allBlogs.nth(2)).toContainText('title1 - author1')
+        await expect(listItems.nth(0)).toContainText('title3 by author3') 
+        await expect(listItems.nth(1)).toContainText('title2 by author2') 
+        await expect(listItems.nth(2)).toContainText('title1 by author1') 
       })
     })
   })
-
 })
