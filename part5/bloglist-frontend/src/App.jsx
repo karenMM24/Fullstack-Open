@@ -11,6 +11,7 @@ import {
 } from 'react-router-dom'
 import LoginForm from './components/LoginForm'
 import BlogList from './components/BlogList'
+import { Container, AppBar, Box, Toolbar, Button, Typography } from '@mui/material'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -143,17 +144,24 @@ const App = () => {
     ? blogs.find(blog => blog.id === match.params.id)
     : null
 
+  const style = { '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }
+
   return (
-    <div>
-      <div>
-        <Link style={padding} to="/">blogs</Link>
-        {user && (<Link style={padding} to='/create'>new blog</Link>)}
-        {!user &&(
-          <Link style={padding} to="/login">login</Link>
-        )}
-        {user && (<button className='logOut-btn' onClick={logOut}>log out</button>)}
-        
-      </div>
+    <Container>
+
+      <Box>
+        <AppBar position='static'>
+          <Toolbar>
+            <Typography variant='h5' sx={{ flexGrow: 1 }}>
+              Blog App
+            </Typography>
+            <Button color='inherit' component={Link} to="/" sx={style}>Blogs</Button>
+            {user && (<Button color='inherit' component={Link} to="/create" sx={style}>New Blog</Button>)}
+            {user && (<Button color='inherit' onClick={logOut} sx={style}>log out</Button>)}
+            {!user && (<Button color='inherit' component={Link} to="/login" sx={style}>log in</Button>)}
+          </Toolbar>
+        </AppBar>
+      </Box>
 
       <Routes>
         <Route path='/login' element={
@@ -170,7 +178,7 @@ const App = () => {
         }
         />
       </Routes>
-    </div>
+    </Container>
   )
 }
 

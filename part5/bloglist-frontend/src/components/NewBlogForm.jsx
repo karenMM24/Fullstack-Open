@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { TextField, Button } from '@mui/material'
 
 export const NewBlogForm = ({createBlog}) => {
   const [title, setTitle] = useState('')
@@ -24,42 +25,57 @@ export const NewBlogForm = ({createBlog}) => {
     <form onSubmit={ handleCreateBlog }>
       <h2>create new</h2>
       <div>
-        <label>
-          title:
-          <input
-            data-testid='title'
+          <TextField
+          required  
+          fullWidth
+          margin='dense'
+            label="title"
             type='text'
             value={title}
             onChange={({ target }) => setTitle(target.value)}
             placeholder='write the title '
+            slotProps={{
+              htmlInput: {
+                'data-testid':'title'
+              }
+            }}
           />
-        </label>
       </div>
       <div>
-        <label>
-          author:
-          <input
-            data-testid='author'
+          <TextField
+          required
+          fullWidth
+          margin='dense'
+          label="author"
             type='text'
             value={author}
             onChange={({ target }) => setAuthor(target.value)}
             placeholder='write the author'
+            slotProps={{
+              htmlInput: {
+                'data-testid':'author'
+              }
+            }}
           />
-        </label>
       </div>
       <div>
-        <label>
-          url:
-          <input
-            data-testid='url'
+          <TextField
+          fullWidth
+          required
+          margin='dense'
+          label="url"
             type='text'
             value={url}
             onChange={({ target }) => setUrl(target.value)}
             placeholder='write the url'
+            slotProps={{
+              htmlInput: {
+                'data-testid':'url'
+              }
+            }}
           />
-        </label>
       </div>
-      <button type="submit">create</button>
+      <Button type="submit" variant='contained'>create</Button>
     </form>
   )
 }
