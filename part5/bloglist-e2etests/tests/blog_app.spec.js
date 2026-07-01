@@ -16,23 +16,19 @@ describe('Blog app', () => {
   })
 
   test('Login form is shown', async ({ page }) => {
-    // CORREGIDO: Ahora busca un enlace, no un botón
     await page.getByRole('link', { name: 'log in' }).click()
     
     await expect(page.getByRole('heading', { name: 'log into application' })).toBeVisible()
-    // Este sí es un botón real (tipo submit)
     await expect(page.getByRole('button', { name: 'login' })).toBeVisible()
   })
 
   describe('Login', () => {
     beforeEach(async ({ page }) => {
-      // CORREGIDO
       await page.getByRole('link', { name: 'log in' }).click()
     })
 
     test('succeeds with correct credentials', async ({ page }) => {
       await loginWith(page, 'mluukkai', 'salainen')
-      // log out SÍ es un botón real
       await expect(page.getByRole('button', { name: 'log out' })).toBeVisible()
     })
 
@@ -45,14 +41,12 @@ describe('Blog app', () => {
 
   describe('When logged in', () => {
     beforeEach(async ({ page }) => {
-      // CORREGIDO
       await page.getByRole('link', { name: 'log in' }).click()
       await loginWith(page, 'mluukkai', 'salainen')
       await expect(page.getByRole('button', { name: 'log out' })).toBeVisible()
     })
 
     test('a new blog can be created', async ({ page }) => {
-      // CORREGIDO: Ahora es un link
       await page.getByRole('link', { name: 'New Blog' }).click()
       
       await expect(page.getByRole('heading', { name: 'Create new' })).toBeVisible()
@@ -64,10 +58,8 @@ describe('Blog app', () => {
 
       await expect(page.getByText('a new blog some test title by author name have been added')).toBeVisible()
       
-      // CORREGIDO: Ahora es un link
       await page.getByRole('link', { name: 'Blogs' }).click()
       
-      // En tu BlogList ahora se dibuja así (y también es un link)
       await expect(page.getByRole('link', { name: 'some test title by author name' })).toBeVisible()
     })
 
@@ -92,7 +84,6 @@ describe('Blog app', () => {
       })
 
       test('A blog can be edited (likes)', async ({ page }) => {
-        // En tu BlogList los títulos también son Links de MUI
         await page.getByRole('link', { name: 'title1 by author1' }).click()
         
         await expect(page.getByRole('heading', { name: 'title1' })).toBeVisible()
