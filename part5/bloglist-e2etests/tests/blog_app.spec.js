@@ -1,5 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-const { loginWith, createBlog } = require('./helper')
+const { loginWith } = require('./helper')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
@@ -16,19 +16,23 @@ describe('Blog app', () => {
   })
 
   test('Login form is shown', async ({ page }) => {
-    await page.getByRole('link', { name: 'login' }).click()
+    // CORREGIDO: Ahora busca un enlace, no un botón
+    await page.getByRole('link', { name: 'log in' }).click()
     
     await expect(page.getByRole('heading', { name: 'log into application' })).toBeVisible()
+    // Este sí es un botón real (tipo submit)
     await expect(page.getByRole('button', { name: 'login' })).toBeVisible()
   })
 
   describe('Login', () => {
     beforeEach(async ({ page }) => {
-      await page.getByRole('link', { name: 'login' }).click()
+      // CORREGIDO
+      await page.getByRole('link', { name: 'log in' }).click()
     })
 
     test('succeeds with correct credentials', async ({ page }) => {
       await loginWith(page, 'mluukkai', 'salainen')
+      // log out SÍ es un botón real
       await expect(page.getByRole('button', { name: 'log out' })).toBeVisible()
     })
 
@@ -41,13 +45,17 @@ describe('Blog app', () => {
 
   describe('When logged in', () => {
     beforeEach(async ({ page }) => {
-      await page.getByRole('link', { name: 'login' }).click()
+      // CORREGIDO
+      await page.getByRole('link', { name: 'log in' }).click()
       await loginWith(page, 'mluukkai', 'salainen')
       await expect(page.getByRole('button', { name: 'log out' })).toBeVisible()
     })
 
     test('a new blog can be created', async ({ page }) => {
-      await page.getByRole('link', { name: 'new blog' }).click()
+      // CORREGIDO: Ahora es un link
+      await page.getByRole('link', { name: 'New Blog' }).click()
+      
+      await expect(page.getByRole('heading', { name: 'Create new' })).toBeVisible()
       
       await page.getByTestId('title').fill('some test title')
       await page.getByTestId('author').fill('author name')
@@ -56,8 +64,10 @@ describe('Blog app', () => {
 
       await expect(page.getByText('a new blog some test title by author name have been added')).toBeVisible()
       
-      await page.getByRole('link', { name: 'blogs' }).click()
+      // CORREGIDO: Ahora es un link
+      await page.getByRole('link', { name: 'Blogs' }).click()
       
+      // En tu BlogList ahora se dibuja así (y también es un link)
       await expect(page.getByRole('link', { name: 'some test title by author name' })).toBeVisible()
     })
 
@@ -82,7 +92,10 @@ describe('Blog app', () => {
       })
 
       test('A blog can be edited (likes)', async ({ page }) => {
+        // En tu BlogList los títulos también son Links de MUI
         await page.getByRole('link', { name: 'title1 by author1' }).click()
+        
+        await expect(page.getByRole('heading', { name: 'title1' })).toBeVisible()
         
         await page.getByRole('button', { name: 'like' }).click()
         await expect(page.getByText('likes 2')).toBeVisible()
@@ -97,18 +110,17 @@ describe('Blog app', () => {
         
         await page.getByRole('button', { name: 'remove' }).click()
         
-        await page.getByRole('link', { name: 'blogs' }).click()
+        await page.getByRole('link', { name: 'Blogs' }).click()
         await expect(page.getByRole('link', { name: 'title1 by author1' })).not.toBeVisible()
       })
 
       test('Button delete only visible for the user that created it', async ({ page }) => {
         await page.getByRole('button', { name: 'log out' }).click()
         
-        await page.getByRole('link', { name: 'login' }).click()
+        await page.getByRole('link', { name: 'log in' }).click()
         await loginWith(page, 'test', '12345')
         
-        await page.getByRole('link', { name: 'blogs' }).click()
-        
+        await page.getByRole('link', { name: 'Blogs' }).click()
         await page.getByRole('link', { name: 'title1 by author1' }).click()
         
         await expect(page.getByRole('button', { name: 'remove' })).not.toBeVisible()
