@@ -1,10 +1,14 @@
+import { Alert } from '@mui/material'
 
 export const Notification = ({ notification }) => {
-  if(notification === null){
-    return
+  if (notification === null) {
+    return null
   }
-  return(
-    <p className={`notification ${notification.isError ? 'error' : ''}`}>
-      {notification.message}</p>
+  const severityType = notification.isError ? 'error' : 'success'
+
+  return (
+    <Alert style={{ marginTop: 10, marginBottom: 10 }} severity={severityType}>
+      {notification.message}
+    </Alert>
   )
 }

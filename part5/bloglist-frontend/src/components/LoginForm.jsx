@@ -4,7 +4,7 @@ import { TextField, Button } from "@mui/material"
 const LoginForm = ({handleLogin, username, setUsername, password, setPassword, notification}) => {
 
   return(
-    <form onSubmit={handleLogin}>
+    <form onSubmit={handleLogin} style={{fontFamily:'Arial'}}>
           <h1>log into application</h1>
           <Notification notification={notification}/>
           <div>
@@ -35,7 +35,7 @@ const LoginForm = ({handleLogin, username, setUsername, password, setPassword, n
               onChange={({ target }) => setPassword(target.value)}
               slotProps={{
                 htmlInput: {
-                  'data-testid': 'username',
+                  'data-testid': 'password',
                 },
               }}
             />

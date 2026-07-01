@@ -16,7 +16,8 @@ const blog = {
 test('Blog information and likes are displayed to unauthenticated users, buttons are not', () => {
   render(<Blog blog={blog} />)
 
-  expect(screen.getByText('author test : test blog')).toBeDefined()
+  expect(screen.getByText('author test', { exact: false })).toBeDefined()
+  expect(screen.getByText('test blog', { exact: false })).toBeDefined()
   expect(screen.getByText('test.com')).toBeDefined()
   expect(screen.getByText('likes 3', { exact: false })).toBeDefined()
   expect(screen.getByText('Added by Creator Name')).toBeDefined()

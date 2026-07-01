@@ -22,8 +22,8 @@ export const NewBlogForm = ({createBlog}) => {
   }
 
   return(
-    <form onSubmit={ handleCreateBlog }>
-      <h2>create new</h2>
+    <form onSubmit={ handleCreateBlog } style={{fontFamily:'Arial'}}>
+      <h2>Create new</h2>
       <div>
           <TextField
           required  
